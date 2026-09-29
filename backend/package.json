@@ -1,0 +1,27 @@
+{
+  "name": "agrogrant-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/run.mjs dev",
+    "start": "npm run build && node scripts/run.mjs prod",
+    "build": "tsc",
+    "start:prod": "node scripts/run.mjs prod",
+    "db:create": "node scripts/create-db.mjs",
+    "smoke": "npm run build && node scripts/smoke-onboarding.mjs",
+    "test:support": "npm run build && node scripts/test-support.mjs && node scripts/smoke-support.mjs"
+  },
+  "dependencies": {
+    "@maxhub/max-bot-api": "0.3.1",
+    "dotenv": "^16.6.1",
+    "gigachat": "^0.0.20",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/pg": "^8.23.1",
+    "tsx": "^4.20.0",
+    "typescript": "^5.8.0"
+  }
+}

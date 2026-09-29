@@ -1,0 +1,4 @@
+beautifulsoup4==4.13.4
+psycopg[binary]==3.2.9
+pypdf==5.9.0
+requests==2.32.5

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f5f4ef" />
+    <title>AgroGrant — календарь поддержки</title>
+    <style>
+      :root{font-family:Inter,"Segoe UI",Arial,sans-serif;color:#202820;background:#e6ebe5;font-synthesis:none}
+      *{box-sizing:border-box}button{font:inherit}body{margin:0;min-height:100vh}.stage{min-height:100vh;display:grid;place-items:center;padding:24px}.phone{width:min(100%,414px);height:min(900px,calc(100vh - 48px));min-height:650px;background:#f5f4ef;border:1px solid #d9dfd6;border-radius:34px;box-shadow:0 24px 80px #233a2b20;overflow:hidden;display:flex;flex-direction:column}.scroll{overflow:auto;flex:1;scrollbar-width:none}.scroll::-webkit-scrollbar{display:none}.top{padding:28px 23px 16px;background:#f5f4ef;position:sticky;top:0;z-index:2}.brand{display:flex;justify-content:space-between;align-items:center;color:#52644f;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.brand-mark{display:flex;align-items:center;gap:8px}.leaf{width:24px;height:24px;display:grid;place-items:center;border-radius:8px;background:#234d36;color:white;font-size:15px;letter-spacing:0}.demo{font-size:10px;letter-spacing:.04em;color:#737d70;background:#e8ede4;padding:6px 9px;border-radius:20px}.heading{display:flex;justify-content:space-between;align-items:end;margin-top:25px}.heading h1{font-size:29px;letter-spacing:-.045em;line-height:1.02;margin:0;font-weight:760}.heading p{margin:7px 0 0;color:#828b7d;font-size:13px}.avatar{width:40px;height:40px;border-radius:14px;background:#dce7d7;color:#31573e;display:grid;place-items:center;font-weight:750}.content{padding:0 17px 20px}.summary{background:#244f38;border-radius:22px;color:white;padding:19px 19px 16px;position:relative;overflow:hidden;margin:3px 6px 16px}.summary:after{content:"";position:absolute;width:150px;height:150px;border:1px solid #ffffff22;border-radius:50%;right:-38px;top:-68px;box-shadow:0 0 0 30px #ffffff08,0 0 0 60px #ffffff06}.summary small{font-size:11px;color:#cae0d0;font-weight:650}.summary strong{display:block;font-size:25px;line-height:1.1;margin:9px 0 5px;letter-spacing:-.035em}.summary span{font-size:12px;color:#d8e7da}.summary .pill{display:inline-block;padding:6px 9px;border-radius:8px;background:#ffffff1b;color:#eaf4e9;font-size:11px;font-weight:700;margin-top:14px}.switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#e8ebe5;padding:4px;border-radius:13px;margin:0 6px 16px}.switch button{border:0;border-radius:10px;padding:10px 4px;background:transparent;color:#798377;font-weight:700;font-size:13px;cursor:pointer}.switch button.active{background:white;color:#254d37;box-shadow:0 2px 8px #1c3c2410}.panel{background:#fff;border:1px solid #e7ebe3;border-radius:21px;padding:16px 14px 14px;box-shadow:0 5px 22px #263c2a08}.month-head{display:flex;justify-content:space-between;align-items:center;padding:1px 3px 15px}.month-head strong{font-size:18px;letter-spacing:-.03em}.month-actions{display:flex;gap:5px}.icon-button{width:30px;height:30px;border:1px solid #e7ebe4;background:#fff;border-radius:9px;color:#406249;cursor:pointer;font-size:21px;line-height:1}.weekdays,.grid{display:grid;grid-template-columns:repeat(7,1fr)}.weekdays span{text-align:center;color:#a0a99b;font-size:11px;font-weight:800;padding:7px 0 10px}.day{height:45px;position:relative;border:0;background:transparent;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#39463a;font-weight:650;font-size:13px;cursor:pointer}.day.out{color:#c6cec2}.day.today:after{content:"";position:absolute;bottom:8px;width:4px;height:4px;background:#2d6b47;border-radius:50%}.day.has-event:before{content:"";position:absolute;bottom:5px;width:5px;height:5px;background:#db9552;border-radius:50%}.day.selected{background:#28563e;color:white}.day.selected:before,.day.selected:after{background:white}.legend{display:flex;gap:16px;align-items:center;color:#879083;font-size:11px;padding:13px 5px 0}.dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:1px}.dot.deadline{background:#db9552}.dot.today-dot{background:#2d6b47}.agenda-head{display:flex;justify-content:space-between;align-items:center;margin:20px 7px 10px}.agenda-head h2{font-size:18px;letter-spacing:-.035em;margin:0}.count{font-size:11px;color:#657763;background:#e9efe6;border-radius:20px;padding:6px 9px;font-weight:700}.event{background:#fff;border:1px solid #e6ebe3;border-radius:18px;margin:0 1px 9px;padding:15px 15px 13px}.event-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.tag{background:#fff0e1;color:#ae642e;font-size:10px;font-weight:800;border-radius:6px;padding:5px 7px;text-transform:uppercase;letter-spacing:.04em}.tag.green{background:#e8f0e7;color:#43754b}.date-label{color:#a4aa9f;font-size:11px;font-weight:700}.event h3{font-size:15px;line-height:1.3;letter-spacing:-.02em;margin:11px 0 7px}.event p{font-size:12px;line-height:1.45;color:#7b877a;margin:0 0 12px}.event-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #eff1ec;padding-top:11px;color:#748071;font-size:11px}.event-foot a{color:#315d40;text-decoration:none;font-weight:800;font-size:11px}.empty{background:#fff;border:1px solid #e6ebe3;border-radius:18px;text-align:center;padding:21px;color:#8a9487;font-size:12px;line-height:1.5}.empty b{display:block;color:#435546;font-size:14px;margin-bottom:5px}.empty .calendar-glyph{font-size:24px;margin-bottom:5px}.note{color:#a0a89a;font-size:10px;line-height:1.4;margin:14px 6px}.bottom{display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border-top:1px solid #e8ece6;padding:10px 12px calc(9px + env(safe-area-inset-bottom));flex:none}.navitem{border:0;background:none;color:#a1ab9e;display:grid;justify-items:center;gap:5px;font-size:10px;font-weight:700;padding:3px}.navitem svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}.navitem.active{color:#28563e}.no-date{display:none}.no-date.active{display:block}.dated.hidden{display:none}.no-date-intro{color:#7d8a7d;font-size:12px;line-height:1.5;margin:2px 7px 15px}.no-date .event{margin-bottom:10px}@media(max-width:480px){.stage{padding:0}.phone{width:100%;height:100dvh;min-height:0;border:0;border-radius:0;box-shadow:none}}
+    </style>
+  </head>
+  <body>
+    <div class="stage"><main class="phone" aria-label="Макет календаря AgroGrant">
+      <div class="scroll">
+        <header class="top"><div class="brand"><span class="brand-mark"><span class="leaf">✳</span> AGROGRANT</span><span class="demo">ДЕМО-ДАННЫЕ</span></div><div class="heading"><div><h1>Календарь</h1><p>Сроки грантов и субсидий</p></div><div class="avatar" aria-label="Профиль">АГ</div></div></header>
+        <div class="content">
+          <section class="summary" aria-label="Ближайший срок"><small>БЛИЖАЙШИЙ ДЕДЛАЙН</small><strong id="next-title">—</strong><span id="next-subtitle">Загрузка событий</span><br><span class="pill" id="next-pill">—</span></section>
+          <div class="switch" role="tablist" aria-label="Тип событий"><button id="dated-tab" class="active" role="tab" aria-selected="true">С датой</button><button id="undated-tab" role="tab" aria-selected="false">Срок уточняется</button></div>
+          <div class="dated" id="dated-view"><section class="panel" aria-label="Календарь"><div class="month-head"><strong id="month-title"></strong><div class="month-actions"><button class="icon-button" id="prev" aria-label="Предыдущий месяц">‹</button><button class="icon-button" id="next" aria-label="Следующий месяц">›</button></div></div><div class="weekdays"><span>ПН</span><span>ВТ</span><span>СР</span><span>ЧТ</span><span>ПТ</span><span>СБ</span><span>ВС</span></div><div class="grid" id="calendar-grid"></div><div class="legend"><span><i class="dot deadline"></i>Дедлайн</span><span><i class="dot today-dot"></i>Сегодня</span></div></section><div class="agenda-head"><h2 id="agenda-title">События</h2><span class="count" id="agenda-count">0 событий</span></div><div id="agenda"></div></div>
+          <div class="no-date" id="undated-view"><p class="no-date-intro">У этих программ пока нет подтверждённого срока приёма. Проверьте условия на официальной странице перед подачей.</p><div id="undated-list"></div></div>
+          <p class="note">Макет показывает примерные записи. Даты и условия здесь не относятся к реальным отборам.</p>
+        </div>
+      </div>
+      <nav class="bottom" aria-label="Основная навигация"><button class="navitem" aria-label="Подбор"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-6h6v6"/></svg><span>Подбор</span></button><button class="navitem active" aria-current="page"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg><span>Календарь</span></button><button class="navitem" aria-label="Мои заявки"><svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6zM9 11h6M9 15h6"/></svg><span>Мои заявки</span></button></nav>
+    </main></div>
+    <script>
+      const today = new Date(); today.setHours(0,0,0,0);
+      const y=today.getFullYear(), m=today.getMonth();
+      const iso=(d)=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      const inDays=(n)=>{const d=new Date(today);d.setDate(d.getDate()+n);return iso(d)};
+      // Only sample content for design review; production UI will use the backend calendar API.
+      const events=[
+        {date:inDays(6),kind:'Грант',title:'Развитие семейной фермы',description:'Поддержка расширения производства и покупки оборудования',region:'Ивановская область'},
+        {date:inDays(12),kind:'Субсидия',title:'Возмещение затрат на технику',description:'Частичная компенсация расходов на сельхозтехнику',region:'Ивановская область'},
+        {date:inDays(12),kind:'Грант',title:'Агростартап: приём заявок',description:'Средства на запуск или развитие фермерского хозяйства',region:'Ивановская область'},
+        {date:inDays(22),kind:'Субсидия',title:'Поддержка молочного животноводства',description:'Компенсация части производственных затрат',region:'Ивановская область'},
+        {date:inDays(42),kind:'Грант',title:'Развитие сельского туризма',description:'Финансирование проектов агротуризма',region:'Федеральная программа'}
+      ];
+      const undated=[{kind:'Программа',title:'Поддержка малых форм хозяйствования',description:'Дата следующего отбора ещё не опубликована',region:'Ивановская область'},{kind:'Программа',title:'Развитие кооперации',description:'Срок приёма следует уточнить в официальном источнике',region:'Федеральная программа'}];
+      const fmt=(d,options)=>new Intl.DateTimeFormat('ru-RU',options).format(d);
+      const parse=(s)=>new Date(s+'T12:00:00');
+      let selected=events[0].date, viewYear=parse(selected).getFullYear(), viewMonth=parse(selected).getMonth();
+      const grid=document.getElementById('calendar-grid');
+      function renderCalendar(){
+        document.getElementById('month-title').textContent=fmt(new Date(viewYear,viewMonth,1),{month:'long',year:'numeric'});
+        grid.replaceChildren();
+        const first=new Date(viewYear,viewMonth,1);const offset=(first.getDay()+6)%7;
+        const count=Math.ceil((offset+new Date(viewYear,viewMonth+1,0).getDate())/7)*7;
+        for(let i=0;i<count;i++){
+          const date=new Date(viewYear,viewMonth,1-offset+i),key=iso(date),button=document.createElement('button');
+          button.className='day'+(date.getMonth()!==viewMonth?' out':'')+(key===selected?' selected':'')+(key===iso(today)?' today':'')+(events.some(e=>e.date===key)?' has-event':'');
+          button.textContent=date.getDate();button.setAttribute('aria-label',fmt(date,{day:'numeric',month:'long',year:'numeric'})+(events.some(e=>e.date===key)?', есть дедлайн':''));
+          button.setAttribute('aria-pressed',String(key===selected));
+          button.onclick=()=>{selected=key;viewYear=date.getFullYear();viewMonth=date.getMonth();renderCalendar();renderAgenda()};grid.append(button);
+        }
+      }
+      function eventCard(event,showDate){
+        const card=document.createElement('article');card.className='event';
+        const tag=document.createElement('span');tag.className='tag'+(event.kind==='Программа'?' green':'');tag.textContent=event.kind;
+        const date=document.createElement('span');date.className='date-label';date.textContent=showDate&&event.date?fmt(parse(event.date),{day:'numeric',month:'short'}):event.region;
+        const top=document.createElement('div');top.className='event-top';top.append(tag,date);
+        const title=document.createElement('h3');title.textContent=event.title;
+        const description=document.createElement('p');description.textContent=event.description;
+        const foot=document.createElement('div');foot.className='event-foot';foot.textContent=event.region;
+        card.append(top,title,description,foot);return card;
+      }
+      function renderAgenda(){
+        const matches=events.filter(e=>e.date===selected),date=parse(selected),agenda=document.getElementById('agenda');agenda.replaceChildren();
+        document.getElementById('agenda-title').textContent=fmt(date,{day:'numeric',month:'long'});
+        document.getElementById('agenda-count').textContent=matches.length+' '+(matches.length===1?'событие':matches.length>=2&&matches.length<=4?'события':'событий');
+        if(matches.length)matches.forEach(e=>agenda.append(eventCard(e,false)));
+        else{const empty=document.createElement('div');empty.className='empty';empty.innerHTML='<div class="calendar-glyph">✳</div><b>На этот день дедлайнов нет</b>Выберите дату с оранжевой точкой';agenda.append(empty)}
+      }
+      const upcoming=events.filter(e=>e.date>=iso(today)).sort((a,b)=>a.date.localeCompare(b.date))[0];
+      if(upcoming){document.getElementById('next-title').textContent=fmt(parse(upcoming.date),{day:'numeric',month:'long'});document.getElementById('next-subtitle').textContent=upcoming.title;const n=Math.round((parse(upcoming.date)-parse(iso(today)))/86400000);document.getElementById('next-pill').textContent=`Через ${n} дн.`}
+      document.getElementById('prev').onclick=()=>{viewMonth--;if(viewMonth<0){viewMonth=11;viewYear--}renderCalendar()};
+      document.getElementById('next').onclick=()=>{viewMonth++;if(viewMonth>11){viewMonth=0;viewYear++}renderCalendar()};
+      const datedTab=document.getElementById('dated-tab'),undatedTab=document.getElementById('undated-tab');
+      function showTab(undated){document.getElementById('dated-view').classList.toggle('hidden',undated);document.getElementById('undated-view').classList.toggle('active',undated);datedTab.classList.toggle('active',!undated);undatedTab.classList.toggle('active',undated);datedTab.setAttribute('aria-selected',String(!undated));undatedTab.setAttribute('aria-selected',String(undated))}
+      datedTab.onclick=()=>showTab(false);undatedTab.onclick=()=>showTab(true);
+      const undatedList=document.getElementById('undated-list');undated.forEach(e=>undatedList.append(eventCard(e,false)));
+      renderCalendar();renderAgenda();
+    </script>
+  </body>
+</html>
