@@ -2,7 +2,7 @@ import { Keyboard } from '@maxhub/max-bot-api';
 import type { Database } from '../db/client.js';
 import { getProfile } from '../db/profiles.js';
 import {
-  getApplicationStatus, getMeasuresByIds, getNavigation, listApplicationIds,
+  getApplicationStatus, getMeasureDocumentLinks, getMeasuresByIds, getNavigation, listApplicationIds,
   listCatalogMeasures, listMeasures, moveNavigation, saveApplication, setNavigation,
   updateApplicationStatus,
 } from '../db/support.js';
@@ -16,9 +16,9 @@ const action = Keyboard.button.callback;
 const link = Keyboard.button.link;
 
 export const MENU_BUTTONS: Button[][] = [
-  [action('🔎 Подобрать поддержку', 'support:open'), action('📋 Мои заявки', 'support:applications')],
+  [action('🌾 Моё хозяйство', 'support:profile'), action('📋 Мои заявки', 'support:applications')],
+  [action('🔎 Подобрать поддержку', 'support:open')],
   [action('📚 Каталог региона', 'support:catalog')],
-  [action('🌾 Моё хозяйство', 'support:profile'), action('❓ Помощь', 'support:help')],
 ];
 
 function cleanText(value: string | null | undefined, max = 450): string {
@@ -95,15 +95,29 @@ async function card(database: Database, userId: string, nav: SupportNavigation):
   if (measure.terms && cleanText(measure.terms, 270) !== cleanText(measure.description, 270)) {
     lines.push('', `Условия: ${cleanText(measure.terms, 270)}`);
   }
-  lines.push('', 'Совпадение направления не подтверждает право на получение поддержки.');
-
   const buttons: Button[][] = [];
-  const urls: Button[] = [];
   const sourceUrl = safeLink(measure.sourceUrl);
   const applicationUrl = safeLink(measure.applicationUrl);
-  if (sourceUrl) urls.push(link('📄 Источник и условия', sourceUrl));
-  if (applicationUrl && applicationUrl !== sourceUrl) urls.push(link('🔗 Перейти к подаче', applicationUrl));
-  if (urls.length) buttons.push(urls);
+  const document = (await getMeasureDocumentLinks(database, id))
+    .map((item) => ({ title: item.title, url: safeLink(item.url) }))
+    .find((item) => item.url);
+  lines.push('', 'Ссылки:');
+  if (sourceUrl) {
+    lines.push(`🔗 Сайт с условиями: ${sourceUrl}`);
+    buttons.push([link('🌐 Открыть сайт', sourceUrl)]);
+  }
+  if (document?.url && document.url !== sourceUrl) {
+    lines.push(`📄 ${cleanText(document.title, 80) || 'Объявление'}: ${document.url}`);
+    buttons.push([link('📄 Открыть объявление', document.url)]);
+  }
+  if (applicationUrl && applicationUrl !== sourceUrl && applicationUrl !== document?.url) {
+    lines.push(`✍️ Страница подачи: ${applicationUrl}`);
+    buttons.push([link('✍️ Перейти к подаче', applicationUrl)]);
+  } else {
+    lines.push('Прямая ссылка на подачу пока не подтверждена. Порядок подачи смотри в объявлении.');
+  }
+  if (!sourceUrl && !document?.url && !applicationUrl) lines.push('Ссылка на источник пока не проверена.');
+  lines.push('', 'Совпадение направления не подтверждает право на получение поддержки.');
 
   if (nav.mode === 'recommendations' || nav.mode === 'catalog') {
     buttons.push([action(status && status !== 'withdrawn' ? '✓ В моих заявках' : '✅ Хочу податься', `support:add:${nav.token}:${id}`)]);

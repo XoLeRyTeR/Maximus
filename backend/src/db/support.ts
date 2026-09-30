@@ -55,6 +55,16 @@ export async function getMeasuresByIds(database: Database, ids: string[]): Promi
   return ids.map((id) => byId.get(id)).filter((item): item is SupportMeasure => Boolean(item));
 }
 
+export type SupportDocumentLink = { url: string; title: string };
+
+export async function getMeasureDocumentLinks(database: Database, measureId: string): Promise<SupportDocumentLink[]> {
+  const result = await database.query<SupportDocumentLink>(
+    `SELECT url, title FROM support_documents WHERE measure_id = $1::bigint
+     ORDER BY CASE WHEN lower(title) LIKE '%объявлен%' THEN 0 ELSE 1 END, id
+     LIMIT 3`, [measureId]);
+  return result.rows;
+}
+
 export type SupportNavigation = { token: string; mode: 'recommendations' | 'applications' | 'catalog'; ids: string[]; position: number };
 
 export async function setNavigation(database: Database, userId: string, mode: SupportNavigation['mode'], ids: string[]): Promise<SupportNavigation> {

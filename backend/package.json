@@ -10,7 +10,8 @@
     "start:prod": "node scripts/run.mjs prod",
     "db:create": "node scripts/create-db.mjs",
     "smoke": "npm run build && node scripts/smoke-onboarding.mjs",
-    "test:support": "npm run build && node scripts/test-support.mjs && node scripts/smoke-support.mjs"
+    "test:support": "npm run build && node scripts/test-support.mjs && node scripts/smoke-support.mjs",
+    "test:delivery": "npm run build && node scripts/test-max-delivery.mjs"
   },
   "dependencies": {
     "@maxhub/max-bot-api": "0.3.1",

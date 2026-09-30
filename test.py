@@ -66,7 +66,8 @@ def main() -> None:
     args.output.write_text(payload + "\n", encoding="utf-8")
     columns = ("id", "source", "kind", "title", "short_description", "support_type",
                "application_url", "region", "published_at", "application_start",
-               "application_deadline", "source_url", "activity_labels", "activity_exclusions",
+               "application_deadline", "deadline_status", "deadline_evidence", "source_url",
+               "activity_labels", "activity_exclusions",
                "activity_scope", "activity_status", "document_count")
     with args.csv.open("w", encoding="utf-8-sig", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=columns)

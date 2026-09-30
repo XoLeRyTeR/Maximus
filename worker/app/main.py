@@ -13,6 +13,7 @@ from app.db import backfill_card_fields, connect, save_error, save_run
 from app.ingestion import ivanovo_announcements, ivanovo_support, svoefermerstvo
 from app.ingestion.base import Fetcher
 from app.llm.activity_classifier import classify_pending
+from app.llm.deadline_classifier import extract_pending
 from app.llm.gigachat_client import GigaChatClient, GigaChatError
 from app.llm.summary_classifier import summarize_pending
 
@@ -36,14 +37,18 @@ def run(args: argparse.Namespace) -> int:
             count = backfill_card_fields(conn, force=args.backfill_card_fields)
             if count:
                 LOG.info("card fields backfilled: %s", count)
-        for source in (() if args.classify_only or args.backfill_card_fields or args.summary_only else selected):
+        for source in (() if args.classify_only or args.backfill_card_fields or args.summary_only or args.deadline_only else selected):
             try:
                 if source == "ivanovo_support":
                     measures = ivanovo_support.collect(fetcher, max_documents=args.max_support_documents)
                 elif source == "ivanovo_announcements":
                     measures = ivanovo_announcements.collect(fetcher, max_pdfs=args.max_pdfs, year=args.year)
                 else:
-                    measures = svoefermerstvo.collect(fetcher, max_pages=args.max_federal_pages)
+                    measures = svoefermerstvo.collect(
+                        fetcher,
+                        max_pages=args.max_federal_pages,
+                        detail_workers=args.federal_detail_workers,
+                    )
                 if args.dry_run:
                     print(json.dumps({"source": source, "count": len(measures), "sample": [asdict(m) for m in measures[:args.sample]]}, ensure_ascii=False, default=str))
                 else:
@@ -54,7 +59,26 @@ def run(args: argparse.Namespace) -> int:
                 LOG.exception("%s failed", source)
                 if conn is not None:
                     save_error(conn, source, exc)
-        if conn is not None and not args.skip_summary and not args.backfill_card_fields:
+        if conn is not None and not args.skip_deadlines and not (args.backfill_card_fields or args.summary_only or args.classify_only):
+            try:
+                dated, date_errors = extract_pending(
+                    conn, GigaChatClient(),
+                    source=None if args.source == "all" else {
+                        "ivanovo_support": "ivanovo_official_support",
+                        "ivanovo_announcements": "ivanovo_official_selections",
+                        "federal_catalog": "svoefermerstvo_federal",
+                    }[args.source],
+                    limit=args.deadline_limit, force=args.force_deadlines,
+                )
+                LOG.info("deadline extraction: processed=%s errors=%s", dated, date_errors)
+                failed = failed or date_errors > 0
+            except GigaChatError as exc:
+                LOG.error("GigaChat deadlines unavailable: %s", exc)
+                failed = True
+            except Exception:
+                LOG.exception("deadline extraction failed")
+                failed = True
+        if conn is not None and not args.skip_summary and not (args.backfill_card_fields or args.deadline_only or args.classify_only):
             try:
                 summarized, summary_errors = summarize_pending(
                     conn, GigaChatClient(),
@@ -74,7 +98,7 @@ def run(args: argparse.Namespace) -> int:
             except Exception:
                 LOG.exception("short description generation failed")
                 failed = True
-        if conn is not None and not args.skip_classification and not args.backfill_card_fields and not args.summary_only:
+        if conn is not None and not args.skip_classification and not (args.backfill_card_fields or args.summary_only or args.deadline_only):
             try:
                 processed, errors = classify_pending(
                     conn, GigaChatClient(),
@@ -107,6 +131,7 @@ def main() -> int:
     parser.add_argument("--max-pdfs", type=int, default=50, help="newest selection PDFs to parse")
     parser.add_argument("--max-support-documents", type=int, default=100, help="maximum normative files to fetch")
     parser.add_argument("--max-federal-pages", type=int, default=200, help="safety limit for catalog pagination")
+    parser.add_argument("--federal-detail-workers", type=int, default=4, help="parallel detail page requests")
     parser.add_argument("--timeout", type=int, default=25)
     parser.add_argument("--dry-run", action="store_true", help="fetch and parse without database writes")
     parser.add_argument("--sample", type=int, default=2, help="records printed per source in dry run")
@@ -114,6 +139,10 @@ def main() -> int:
     parser.add_argument("--classify-only", action="store_true", help="classify already stored measures without fetching sources")
     parser.add_argument("--backfill-card-fields", action="store_true", help="fill card fields for stored measures without fetching sources or running GigaChat")
     parser.add_argument("--summary-only", action="store_true", help="generate short descriptions for stored measures without fetching sources or classifying activities")
+    parser.add_argument("--deadline-only", action="store_true", help="extract application dates from stored measures with GigaChat only")
+    parser.add_argument("--skip-deadlines", action="store_true", help="skip GigaChat application date extraction")
+    parser.add_argument("--deadline-limit", type=int, help="maximum number of measures to check for application dates")
+    parser.add_argument("--force-deadlines", action="store_true", help="recheck application dates even when source text is unchanged")
     parser.add_argument("--skip-summary", action="store_true", help="do not generate GigaChat short descriptions")
     parser.add_argument("--summary-limit", type=int, help="maximum number of short descriptions to generate")
     parser.add_argument("--force-summaries", action="store_true", help="regenerate short descriptions even when one is already stored")
@@ -131,10 +160,16 @@ def main() -> int:
         parser.error("--summary-only cannot be combined with --dry-run, --classify-only or --backfill-card-fields")
     if args.summary_only and args.skip_summary:
         parser.error("--summary-only cannot be combined with --skip-summary")
+    if args.deadline_only and (args.dry_run or args.classify_only or args.backfill_card_fields or args.summary_only or args.skip_deadlines):
+        parser.error("--deadline-only cannot be combined with --dry-run, other only modes or --skip-deadlines")
+    if args.deadline_limit is not None and args.deadline_limit < 1:
+        parser.error("--deadline-limit must be positive")
     if args.summary_limit is not None and args.summary_limit < 1:
         parser.error("--summary-limit must be positive")
     if args.classification_limit is not None and args.classification_limit < 1:
         parser.error("--classification-limit must be positive")
+    if args.federal_detail_workers < 1:
+        parser.error("--federal-detail-workers must be positive")
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     while True:
         result = run(args)

@@ -1,4 +1,7 @@
 .env
+backups/
+**/__pycache__/
+*.log
 **/node_modules/
 **/dist/
 **/.npm-cache/

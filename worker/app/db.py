@@ -53,8 +53,14 @@ def save_run(conn: psycopg.Connection, source: str, measures: list[Measure]) -> 
                     source_url=EXCLUDED.source_url, title=EXCLUDED.title, region=EXCLUDED.region,
                     kind=EXCLUDED.kind, description=EXCLUDED.description, terms=EXCLUDED.terms,
                     amount=EXCLUDED.amount, published_at=EXCLUDED.published_at,
-                    application_start=EXCLUDED.application_start,
-                    application_deadline=EXCLUDED.application_deadline,
+                    application_start=CASE
+                        WHEN support_measures.content_hash<>EXCLUDED.content_hash THEN EXCLUDED.application_start
+                        ELSE COALESCE(EXCLUDED.application_start, support_measures.application_start)
+                    END,
+                    application_deadline=CASE
+                        WHEN support_measures.content_hash<>EXCLUDED.content_hash THEN EXCLUDED.application_deadline
+                        ELSE COALESCE(EXCLUDED.application_deadline, support_measures.application_deadline)
+                    END,
                     short_description=CASE WHEN support_measures.content_hash<>EXCLUDED.content_hash
                                            THEN NULL ELSE support_measures.short_description END,
                     support_type=EXCLUDED.support_type,

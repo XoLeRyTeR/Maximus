@@ -32,11 +32,17 @@ try {
              ARRAY['пищевые яйца'], 'specific', 'classified', '2026-01-01', '2099-12-31')
      RETURNING id::text`, [source, suffix]);
   const id = inserted.rows[0].id;
+  await database.query(
+    `INSERT INTO support_documents (measure_id, url, title, extraction_status)
+     VALUES ($1::bigint, 'https://example.org/egg/announcement.pdf', 'Объявление об отборе', 'not_fetched')`, [id]);
   const regionReply = await handleMessage(database, user, '/region Ивановская область');
   assert.match(regionReply, /Регион работы/);
   assert.match((await openCatalog(database, userId)).text, /Каталог региона/);
   const first = await openRecommendations(database, userId);
   assert.match(first.text, /Поддержка производства яиц/);
+  assert.match(first.text, /https:\/\/example\.org\/egg/);
+  assert.match(first.text, /https:\/\/example\.org\/egg\/announcement\.pdf/);
+  assert.ok(first.buttons.flat().some((button) => button.type === 'link' && button.url.endsWith('announcement.pdf')));
   const add = first.buttons.flat().find((button) => button.type === 'callback' && button.text.includes('Хочу податься'));
   assert.ok(add);
   const saved = await handleCatalogAction(database, userId, add.payload);

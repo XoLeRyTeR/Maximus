@@ -1,0 +1,15 @@
+.git
+.env
+**/node_modules
+**/dist
+**/__pycache__
+**/.deps
+**/.pytest_cache
+**/.venv
+**/venv
+*.log
+parsed_data.*
+outputs
+frontend
+docs
+*.xlsx
