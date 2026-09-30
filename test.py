@@ -14,7 +14,6 @@ from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT / "worker"))
 # The local test installation is optional; normal installations use site-packages.
