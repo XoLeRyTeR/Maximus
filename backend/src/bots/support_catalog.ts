@@ -66,6 +66,7 @@ async function card(database: Database, userId: string, nav: SupportNavigation):
     '', cleanText(measure.shortDescription || measure.description || measure.terms, 520) || 'Описание уточняется в источнике.',
   ];
 
+
   if (nav.mode === 'recommendations') {
     if (measure.activityStatus === 'needs_review') {
       lines.push('', '⚠️ Предварительное совпадение. Направления этой меры ещё проверяются по документам.');
