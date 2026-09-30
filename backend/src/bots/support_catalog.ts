@@ -60,7 +60,6 @@ async function card(database: Database, userId: string, nav: SupportNavigation):
   const match = profile ? recommendMeasures([measure], profile.activityLabels ?? [], profile.operatingRegionName ?? profile.regionName)[0] : undefined;
   const intro = nav.mode === 'applications' ? 'Мои заявки'
     : nav.mode === 'catalog' ? 'Каталог региона' : 'Поддержка вашего хозяйства';
-
   const lines = [
     `${intro} · ${nav.position + 1} из ${nav.ids.length}`,
     '', measure.title,
